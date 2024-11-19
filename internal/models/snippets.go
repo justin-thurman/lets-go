@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Snippet represents a text snippet.
 type Snippet struct {
 	Created time.Time
 	Expires time.Time
@@ -14,10 +15,13 @@ type Snippet struct {
 	ID      int
 }
 
+// SnippetModel encapsulates data storage for Snippets.
 type SnippetModel struct {
 	DB *sql.DB
 }
 
+// Get returns a `Snippet` retrieved by an ID value or an error if no Snippet is found
+// or if database access fails.
 func (m *SnippetModel) Get(id int) (Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
   WHERE expires > UTC_TIMESTAMP() AND id =?`
@@ -37,6 +41,7 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
 	return s, nil
 }
 
+// Insert saves a new Snippet record.
 func (m *SnippetModel) Insert(title, content string, expires int) (int, error) {
 	stmt := `INSERT INTO snippets (title, content, created, expires)
   VALUES (?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
@@ -51,6 +56,7 @@ func (m *SnippetModel) Insert(title, content string, expires int) (int, error) {
 	return int(id), nil
 }
 
+// Latest returns the ten most recent Snippet records, ordered by ID, descending.
 func (m *SnippetModel) Latest() ([]Snippet, error) {
 	return nil, nil
 }
